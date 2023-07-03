@@ -22,10 +22,7 @@ class TodoListViewController: UITableViewController {
 //            itemArray = items
 //        }
         
-        //now we just hardcoded  multiple object of our model class and added that into our array
-        let newItem = Item()
-        newItem.title="Find Kohli"
-        itemArray.append(newItem)
+        loadItems()
         
     }
 
@@ -102,5 +99,16 @@ class TodoListViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
+    func loadItems() {
+        if let data = try? Data(contentsOf: self.dataFilePath!) {
+            //An object that decodes instances of data types from a plist.
+            let decoder = PropertyListDecoder()
+            do{
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Unable to decode data , \(error)")
+            }
+        }
+    }
 }
 
