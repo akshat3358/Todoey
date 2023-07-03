@@ -6,13 +6,18 @@ class TodoListViewController: UITableViewController {
     
     
     //var itemArray = ["Buy Eggs","Buy Sleepers","Buy Mug","Buy Basket","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p"]
-    let defaults = UserDefaults.standard
+//    let defaults = UserDefaults.standard
     
+    //we are just creating data file path to document folder
+    
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        
+        //will check this later
 //        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
 //            itemArray = items
 //        }
@@ -21,30 +26,6 @@ class TodoListViewController: UITableViewController {
         let newItem = Item()
         newItem.title="Find Kohli"
         itemArray.append(newItem)
-        
-        let newItem1 = Item()
-        newItem1.title="Find Rohit"
-        itemArray.append(newItem1)
-        
-        let newItem2 = Item()
-        newItem2.title="Find Jadeja"
-        itemArray.append(newItem2)
-        
-        let newItem3 = Item()
-        newItem3.title="Find Ajay"
-        itemArray.append(newItem3)
-        
-        let newItem4 = Item()
-        newItem4.title="Find Shami"
-        itemArray.append(newItem4)
-        
-        let newItem5 = Item()
-        newItem5.title="Find Ramesh"
-        itemArray.append(newItem5)
-        
-        let newItem6 = Item()
-        newItem6.title="Find KK"
-        itemArray.append(newItem6)
         
     }
 
@@ -73,9 +54,8 @@ class TodoListViewController: UITableViewController {
         //toggling the done value of that particular cell
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
+        self.saveItems()
        
-        //We are reloading the tableView so that It can call its data source method to populate the latest data into cells after the didselectrowat method called
-        tableView.reloadData()
         //To show the cell is being clicked
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -93,10 +73,10 @@ class TodoListViewController: UITableViewController {
             //What will happen once the user clicks the Add Item button  on our UIAlert
             newItem.title = textField.text!
             self.itemArray.append(newItem)
+            self.saveItems()
+            //now we won't  use this userdefault metthod as we are using encoder to store custom item objects
             
-            self.defaults.set(self.itemArray, forKey: "TodoListArray")
-            
-            self.tableView.reloadData()
+            //self.defaults.set(self.itemArray, forKey: "TodoListArray")
         }
         
         alert.addTextField { (alertTextField) in
@@ -107,6 +87,19 @@ class TodoListViewController: UITableViewController {
         alert.addAction(action)
         
         present(alert, animated: true, completion: nil)
+    }
+    
+    func saveItems() {
+        let encoder = PropertyListEncoder()
+        
+        do{
+            let data = try encoder.encode(self.itemArray)
+            try data.write(to: self.dataFilePath!)
+        } catch {
+            print("Error encoding item array,\(error)")
+        }
+        
+        self.tableView.reloadData()
     }
     
 }
