@@ -35,6 +35,10 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        //With these two lines below we can delete from the persistent container
+//        context.delete(itemArray[indexPath.row])
+//        itemArray.remove(at: indexPath.row)
+        
         //toggling the done value of that particular cell
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
